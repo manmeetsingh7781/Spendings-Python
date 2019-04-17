@@ -3,22 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
-##
-#
-
-#
-
-#
-#
-#
-#
-#
-
-#
-#
-#
-# ##
-
 
 def get_totals(each_list):
     total = 0
