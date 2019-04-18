@@ -72,30 +72,41 @@ def calculate_total(file_name):
                 if digit_finder:
                     total_amount += float(digit_finder.group().replace(',', ''))
 
+    print("Warning: All of these calculations are rounded to the nearest k, and Payments & returns are not included in total")
     print(dates[-1] + " through " + dates[0])
-    print("food: $" + str(get_totals(food)))
-    print("payments_returns: $" + str(get_totals(payments_returns)))
-    print("gas: $" + str(get_totals(gas)))
-    print("other: $" + str(get_totals(other)))
-    print("entertainment: $" + str(get_totals(entertainment)))
-    print("electronics: $" + str(get_totals(electronics)))
+    # print(get_totals(food, "food"))
+    # print(get_totals(payments_returns, "payments and returns"))
+    # print(get_totals(gas, "gas"))
+    # print(get_totals(other, 'other'))
+    # print(get_totals(entertainment, 'entertainment'))
+    # print(get_totals(electronics, 'electronics'))
+
+    results = [{'Food': get_totals(food)}, {'Payments and Returns': get_totals(payments_returns)},
+               {'Gas': get_totals(gas)}, {'Other': get_totals(other)},
+               {'Entertainment': get_totals(entertainment)},
+               {'Electronics': get_totals(electronics)}]
+
+
+    for each_result in results:
+        for each_value in each_result:
+            print(each_value)
     print("Total $" + str(round(float(total_amount))))
-    print(len(food))
-    print(len(payments_returns))
-    print(len(gas))
-    print(len(other))
-    print(len(entertainment))
-    print(len(electronics))
-    print(len(dates))
-    #x = np.linspace(0, 2, 100)
-    #plt.plot(food, dates, label='Food')
-    # # plt.plot(x, x**2, label='quadratic')
-    # # plt.plot(x, x**3, label='cubic')
-    plt.xlabel('x label')
-    plt.ylabel('y label')
-    plt.title("Simple Plot")
-    plt.legend()
-    plt.show()
+
+
+    # plt.title("Bank Account")
+    #
+    # plt.plot(dates, food, label='Food')
+    # # plt.plot(dates, gas, label='Gas')
+    # # plt.plot(dates, payments_returns, label='Payments and Returns')
+    # # plt.plot(dates, entertainment, label='Entertainment')
+    # # plt.plot(dates, electronics, label='Electronics')
+    # # plt.plot(dates, other, label='Other')
+    #
+    # plt.xlabel('Dates')
+    # plt.ylabel('Spending')
+    # plt.title("Bank Status")
+    # plt.legend()
+    # plt.show()
 
 
 if __name__ == '__main__':
