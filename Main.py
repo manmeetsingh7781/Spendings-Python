@@ -12,6 +12,7 @@ def get_totals(each_list):
     return round(total)
 
 
+
 def calculate_total(file_name):
     total_amount = 0
     dates, food, payments_returns, gas, other,  entertainment, electronics = ([], [], [], [], [], [], [])
@@ -92,11 +93,11 @@ def calculate_total(file_name):
                       get_totals(electronics): 'electronics'}.items(), key=operator.itemgetter(0))
 
     print("Total $" + str(round(float(total_amount))))
-    plt.title("Bank Account")
     temp = []
     temp_vals = []
     str_arr = []
     final_arr = []
+    names = []
     for _ in results:
         temp.append(_[1])
     for e in temp:
@@ -105,31 +106,30 @@ def calculate_total(file_name):
         for i in __:
             str_arr.append(float(i))
     for v in str_arr:
-        if len(final_arr) != len(food): 
+        if v > 0:
             final_arr.append(v)
-        if v == 0:
-            final_arr.remove(v)
+            if len(final_arr) != len(food) and v not in final_arr:
+                final_arr.append(v)
+    for each_item in results_by_name:
+        names.append(each_item[1])
 
     final_arr.sort()
-    for i in final_arr:
-        print(i)
-    print()
-    print(len(final_arr))
-    # print(len(food))
-    # print(len(gas))
-    # print(len(electronics))
-    # print(len(entertainment))
-    # print(len(payments_returns))
-    # print(len(other))
-
-    #     plt.plot(dates, final_arr)
+    # for i in final_arr:
+    #     print(i)
+    calculate_percentage = lambda n, l: n//l
+    print(calculate_percentage(220, 6))
+    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+    # labels = list(map(lambda e: e, names))
+    # print(labels)
+    # sizes = [15, 30, 45, 10]
+    # explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
     #
-    # plt.xlabel('Dates')
-    # plt.ylabel('Spending')
-    # plt.title("Bank Status")
-    # plt.legend()
+    # fig1, ax1 = plt.subplots()
+    # ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+    #         shadow=True, startangle=90)
+    # ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    #
     # plt.show()
 
-
 if __name__ == '__main__':
-    calculate_total('C:\\Users\\manme\\Desktop\\ExportData.csv')
+    calculate_total('C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
