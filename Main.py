@@ -14,8 +14,6 @@ def get_totals(each_list):
 
 def calculate_total(file_name):
     total_amount = 0
-
-    # payments_returns  are not spendings
     dates, food, payments_returns, gas, other,  entertainment, electronics = ([], [], [], [], [], [], [])
     file = open(file_name, 'r')
     file_data = list(file.readlines())
@@ -73,6 +71,7 @@ def calculate_total(file_name):
                 if digit_finder:
                     total_amount += float(digit_finder.group().replace(',', ''))
 
+
     print("Warning: All of these calculations are rounded to the nearest k, and Payments & returns are not included in total")
     print(dates[-1] + " through " + dates[0])
     # print(get_totals(food, "food"))
@@ -82,21 +81,49 @@ def calculate_total(file_name):
     # print(get_totals(entertainment, 'entertainment'))
     # print(get_totals(electronics, 'electronics'))
 
-    results = sorted({get_totals(food): 'Food', get_totals(payments_returns):'Payments and Returns',
-               get_totals(gas): 'Gas', get_totals(other): 'Other',
-               get_totals(entertainment): 'Entertainment',
-               get_totals(electronics): 'Electronics'}.items(), key=operator.itemgetter(0))
+    results = sorted({get_totals(food): food, get_totals(payments_returns): payments_returns,
+               get_totals(gas): gas, get_totals(other): other,
+               get_totals(entertainment): entertainment,
+               get_totals(electronics): electronics}.items(), key=operator.itemgetter(0))
 
-    print(results)
+    results_by_name = sorted({get_totals(food): 'food', get_totals(payments_returns): 'payments_returns',
+                      get_totals(gas): 'gas', get_totals(other): 'other',
+                      get_totals(entertainment): 'entertainment',
+                      get_totals(electronics): 'electronics'}.items(), key=operator.itemgetter(0))
 
     print("Total $" + str(round(float(total_amount))))
-    # plt.title("Bank Account")
-    # plt.plot(dates, food, label='Food')
-    # plt.plot(dates, gas, label='Gas')
-    # plt.plot(dates, payments_returns, label='Payments and Returns')
-    # plt.plot(dates, entertainment, label='Entertainment')
-    # plt.plot(dates, electronics, label='Electronics')
-    # plt.plot(dates, other, label='Other')
+    plt.title("Bank Account")
+    temp = []
+    temp_vals = []
+    str_arr = []
+    final_arr = []
+    for _ in results:
+        temp.append(_[1])
+    for e in temp:
+        temp_vals.append(e)
+    for __ in temp_vals:
+        for i in __:
+            str_arr.append(float(i))
+    for v in str_arr:
+        if len(final_arr) != len(food): 
+            final_arr.append(v)
+        if v == 0:
+            final_arr.remove(v)
+
+    final_arr.sort()
+    for i in final_arr:
+        print(i)
+    print()
+    print(len(final_arr))
+    # print(len(food))
+    # print(len(gas))
+    # print(len(electronics))
+    # print(len(entertainment))
+    # print(len(payments_returns))
+    # print(len(other))
+
+    #     plt.plot(dates, final_arr)
+    #
     # plt.xlabel('Dates')
     # plt.ylabel('Spending')
     # plt.title("Bank Status")
@@ -105,4 +132,4 @@ def calculate_total(file_name):
 
 
 if __name__ == '__main__':
-    calculate_total('Data.csv')
+    calculate_total('C:\\Users\\manme\\Desktop\\ExportData.csv')
