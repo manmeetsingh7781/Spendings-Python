@@ -1,4 +1,5 @@
 import re
+import operator
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -81,27 +82,21 @@ def calculate_total(file_name):
     # print(get_totals(entertainment, 'entertainment'))
     # print(get_totals(electronics, 'electronics'))
 
-    results = [{'Food': get_totals(food)}, {'Payments and Returns': get_totals(payments_returns)},
-               {'Gas': get_totals(gas)}, {'Other': get_totals(other)},
-               {'Entertainment': get_totals(entertainment)},
-               {'Electronics': get_totals(electronics)}]
+    results = sorted({get_totals(food): 'Food', get_totals(payments_returns):'Payments and Returns',
+               get_totals(gas): 'Gas', get_totals(other): 'Other',
+               get_totals(entertainment): 'Entertainment',
+               get_totals(electronics): 'Electronics'}.items(), key=operator.itemgetter(0))
 
+    print(results)
 
-    for each_result in results:
-        for each_value in each_result:
-            print(each_value)
     print("Total $" + str(round(float(total_amount))))
-
-
     # plt.title("Bank Account")
-    #
     # plt.plot(dates, food, label='Food')
-    # # plt.plot(dates, gas, label='Gas')
-    # # plt.plot(dates, payments_returns, label='Payments and Returns')
-    # # plt.plot(dates, entertainment, label='Entertainment')
-    # # plt.plot(dates, electronics, label='Electronics')
-    # # plt.plot(dates, other, label='Other')
-    #
+    # plt.plot(dates, gas, label='Gas')
+    # plt.plot(dates, payments_returns, label='Payments and Returns')
+    # plt.plot(dates, entertainment, label='Entertainment')
+    # plt.plot(dates, electronics, label='Electronics')
+    # plt.plot(dates, other, label='Other')
     # plt.xlabel('Dates')
     # plt.ylabel('Spending')
     # plt.title("Bank Status")
