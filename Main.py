@@ -1,8 +1,6 @@
 import re
 import operator
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 
 def get_totals(each_list):
@@ -75,60 +73,36 @@ def calculate_total(file_name):
 
     print("Warning: All of these calculations are rounded to the nearest k, and Payments & returns are not included in total")
     print(dates[-1] + " through " + dates[0])
-    # print(get_totals(food, "food"))
-    # print(get_totals(payments_returns, "payments and returns"))
-    # print(get_totals(gas, "gas"))
-    # print(get_totals(other, 'other'))
-    # print(get_totals(entertainment, 'entertainment'))
-    # print(get_totals(electronics, 'electronics'))
+    results_by_name = sorted({get_totals(food): 'Restaurants/Dining',
+                      get_totals(gas): 'Gasoline/Fuel', get_totals(other): 'Other Expenses',
+                      get_totals(entertainment): 'Entertainment',
+                      get_totals(electronics): 'Electronics'}.items(), key=operator.itemgetter(0))
 
-    results = sorted({get_totals(food): food, get_totals(payments_returns): payments_returns,
-               get_totals(gas): gas, get_totals(other): other,
-               get_totals(entertainment): entertainment,
-               get_totals(electronics): electronics}.items(), key=operator.itemgetter(0))
-
-    results_by_name = sorted({get_totals(food): 'food', get_totals(payments_returns): 'payments_returns',
-                      get_totals(gas): 'gas', get_totals(other): 'other',
-                      get_totals(entertainment): 'entertainment',
-                      get_totals(electronics): 'electronics'}.items(), key=operator.itemgetter(0))
+    payments_returns_results =  {get_totals(payments_returns): payments_returns,
+                                 get_totals(payments_returns): 'Payments and Returns'}
 
     print("Total $" + str(round(total_amount, 2)))
-    temp = []
-    temp_vals = []
-    str_arr = []
-    final_arr = []
-    names = []
-    for _ in results:
-        temp.append(_[1])
-    for e in temp:
-        temp_vals.append(e)
-    for __ in temp_vals:
-        for i in __:
-            str_arr.append(float(i))
-    for v in str_arr:
-        if v > 0:
-            final_arr.append(v)
-            if len(final_arr) != len(food) and v not in final_arr:
-                final_arr.append(v)
-    for each_item in results_by_name:
-        names.append(each_item[1])
 
-    final_arr.sort()
-    print(results_by_name)
+    chart_setup = []
+
+    labels = []
+    sizes = []
     calculate_percentage = lambda n: round((n/total_amount)*100, 2)
-    print(list(map(calculate_percentage,  float(results_by_name[0]))))
-    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
-    # labels = list(map(lambda e: e, names))
-    # print(labels)
-    # sizes = [15, 30, 45, 10]
-    # explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
-    #
-    # fig1, ax1 = plt.subplots()
-    # ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-    #         shadow=True, startangle=90)
-    # ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    #
-    # plt.show()
+    for each_item in results_by_name:
+        data = dict()
+        data[calculate_percentage(each_item[0])] = each_item[1]
+        chart_setup.append(data)
+    for items in chart_setup:
+        for i in items.values():
+            labels.append(i)
+        for x in items.keys():
+            sizes.append(x)
+
+    plt.pie(sizes,  labels=labels,
+            autopct='%1.1f%%', startangle=140)
+    plt.axis('equal')
+    plt.show()
+
 
 if __name__ == '__main__':
-    calculate_total('C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
+    calculate_total('C:\\Users\\manme\\Desktop\\ExportData.csv')
