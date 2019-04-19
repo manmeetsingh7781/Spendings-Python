@@ -9,7 +9,7 @@ def get_totals(each_list):
     total = 0
     for each in each_list:
         total += float(each)
-    return round(total)
+    return round(total, 2)
 
 
 
@@ -92,7 +92,7 @@ def calculate_total(file_name):
                       get_totals(entertainment): 'entertainment',
                       get_totals(electronics): 'electronics'}.items(), key=operator.itemgetter(0))
 
-    print("Total $" + str(round(float(total_amount))))
+    print("Total $" + str(round(total_amount, 2)))
     temp = []
     temp_vals = []
     str_arr = []
@@ -114,10 +114,9 @@ def calculate_total(file_name):
         names.append(each_item[1])
 
     final_arr.sort()
-    # for i in final_arr:
-    #     print(i)
-    calculate_percentage = lambda n, l: n//l
-    print(calculate_percentage(220, 6))
+    print(results_by_name)
+    calculate_percentage = lambda n: round((n/total_amount)*100, 2)
+    print(list(map(calculate_percentage,  float(results_by_name[0]))))
     # Pie chart, where the slices will be ordered and plotted counter-clockwise:
     # labels = list(map(lambda e: e, names))
     # print(labels)
