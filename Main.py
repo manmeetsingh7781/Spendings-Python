@@ -100,9 +100,9 @@ def calculate_total(file_name):
         kw["arrowprops"].update({"connectionstyle": connectionstyle})
         ax.annotate(records[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
                     horizontalalignment=horizontalalignment, **kw)
-    ax.set_title("\nWarning: All of these calculations are rounded to the nearest k, and Payments & returns are not included in total\n\nData Records through " + dates[-1] + " to " + dates[0] + " \n\n" + " Total-Spending: $" + str(round(total_amount, 2)))
+    ax.set_title("\n\nWarning: All of these calculations are rounded to the nearest k, and Payments & returns are not included in total\nData Records through " + dates[-1] + " to " + dates[0] + " \n" + " Total-Spending: $" + str(round(total_amount, 2))+ "\nPayments & Returns: $" + str(get_totals(payments_returns)))
     plt.show()
-
-
+    
+    
 if __name__ == '__main__':
     calculate_total('C:\\Users\\manme\\Desktop\\ExportData.csv')
