@@ -4,12 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class BoFA():
+class BoFA:
 
     def __init__(self, path):
         self.path = path
         self._total_amount = 0
         self._counter = 0
+        self.calculating = False
         self._records, self._chart_setup, self._labels, self._sizes, self._dates, self._food, self._payments_returns, \
         self._gas, self._other, self._entertainment, self._electronics = ([], [], [], [], [], [], [], [], [], [], [])
 
@@ -20,8 +21,9 @@ class BoFA():
             total += float(each)
         return round(total, 2)
 
-    def calculate_total(self):
-
+    # Takes a file and calculates the Spendings
+    def calculate_total(self, drawing):
+        self.calculating = True
         file = open(self.path, 'r')
         file_data = list(file.readlines())
         for each in file_data:
@@ -89,11 +91,24 @@ class BoFA():
                 self._labels.append(i)
             for x in items.keys():
                 self._sizes.append(x)
-        fig, ax = plt.subplots(figsize=(12, 8), subplot_kw=dict(aspect="equal"))
+
         for i in results_by_name:
             f = "$" + str(i[0]) + " " + i[1] + ", " + str(self._sizes[self._counter]) + "%"
             self._counter += 1
             self._records.append(f)
+        self._total_amount = round(self._total_amount, 2)
+        if drawing:
+            self.draw()
+
+    # Draws a graph to the screen
+    def draw(self, calculations=True):
+
+        if not calculations:
+            calculations = True
+        if calculations and not self.calculating:
+            self.calculate_total(False)
+
+        fig, ax = plt.subplots(figsize=(12, 8), subplot_kw=dict(aspect="equal"))
         wedges, texts = ax.pie(self._sizes, wedgeprops=dict(width=0.5), startangle=-65)
         bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
         kw = dict(xycoords='data', textcoords='data', arrowprops=dict(arrowstyle="-"),
@@ -105,18 +120,31 @@ class BoFA():
             horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
             connectionstyle = "angle,angleA=0,angleB={}".format(ang)
             kw["arrowprops"].update({"connectionstyle": connectionstyle})
-            ax.annotate(self._records[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y), horizontalalignment=horizontalalignment, **kw)
+            ax.annotate(self._records[i], xy=(x, y), xytext=(1.35 * np.sign(x), 1.4 * y),
+                        horizontalalignment=horizontalalignment, **kw)
         ax.set_title(
             "\n\nWarning: All of these calculations are rounded to the nearest k, and Payments & returns are not included in total\nData Records through " +
             self._dates[-1] + " to " + self._dates[0] + " \n" + " Total-Spending: $" + str(
-                round(self._total_amount, 2)) + "\nPayments & Returns: $" + str(self.get_totals(self._payments_returns)))
+                round(self._total_amount, 2)) + "\nPayments & Returns: $" + str(
+                self.get_totals(self._payments_returns)))
+
         plt.show()
 
     # Add two Bank Accounts and compare it
+    def __add__(self, other):
+        self.calculate_total(False)
+        other.calculate_total(False)
+        fig, axes = plt.subplots(1, 2)
+        chart = []
+        for i, ax in enumerate(axes.flatten()):
+            chart.append(ax)
+
+        chart[0] = chart[0].pie(self._sizes, radius=1, autopct="%.1f%%", pctdistance=0.9)
+        chart[1] = chart[1].pie(other._sizes, radius=1, autopct="%.1f%%", pctdistance=0.9)
+        plt.show()
 
 
 if __name__ == '__main__':
-    Me = BoFA('C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
-    Me.calculate_total()
-
-
+    one_month = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
+    last_three_months = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData3months.csv')
+    one_month.draw()
