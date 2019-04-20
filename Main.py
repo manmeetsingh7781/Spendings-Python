@@ -12,7 +12,7 @@ class BoFA:
         self._counter = 0
         self.calculating = False
         self._records, self._chart_setup, self._labels, self._sizes, self._dates, self._food, self._payments_returns, \
-        self._gas, self._other, self._entertainment, self._electronics = ([], [], [], [], [], [], [], [], [], [], [])
+        self._gas, self._other, self._entertainment, self._electronics, self._money, self._final_recs = ([], [], [], [], [], [], [], [], [], [], [], [], [])
 
     @staticmethod
     def get_totals(each_list):
@@ -82,10 +82,13 @@ class BoFA:
                                   self.get_totals(self._entertainment): 'Entertainment',
                                   self.get_totals(self._electronics): 'Electronics'}.items(), key=operator.itemgetter(0))
         calculate_percentage = lambda n: round((n / self._total_amount) * 100, 2)
+
         for each_item in results_by_name:
             data = dict()
+            self._money.append(each_item[0])
             data[calculate_percentage(each_item[0])] = each_item[1]
             self._chart_setup.append(data)
+
         for items in self._chart_setup:
             for i in items.values():
                 self._labels.append(i)
@@ -93,9 +96,12 @@ class BoFA:
                 self._sizes.append(x)
 
         for i in results_by_name:
-            f = "$" + str(i[0]) + " " + i[1] + ", " + str(self._sizes[self._counter]) + "%"
+            f = "$" + str(i[0]) + " - " + i[1] + ", " + str(self._sizes[self._counter]) + "%"
+            ff = "$" + str(i[0]) + " - " + i[1]
+
             self._counter += 1
             self._records.append(f)
+            self._final_recs.append(ff)
         self._total_amount = round(self._total_amount, 2)
         if drawing:
             self.draw()
@@ -127,26 +133,35 @@ class BoFA:
             self._dates[-1] + " to " + self._dates[0] + " \n" + " Total-Spending: $" + str(
                 round(self._total_amount, 2)) + "\nPayments & Returns: $" + str(
                 self.get_totals(self._payments_returns)))
+
         plt.show()
 
     # Add two Bank Accounts and compare it
     def __add__(self, other):
+
         self.calculate_total(False)
         other.calculate_total(False)
         fig, axes = plt.subplots(1, 2, figsize=(12, 8))
         chart = []
         for i, ax in enumerate(axes.flatten()):
             chart.append(ax)
-        chart[0].set_title(self._dates[-1] + " through " + self._dates[0])
-        chart[1].set_title(other._dates[-1] + " through " + other._dates[0])
-        chart[0] = chart[0].pie(self._sizes, labels=self._labels, radius=1, autopct="%.1f%%", pctdistance=0.9)
-        chart[1] = chart[1].pie(other._sizes, labels=other._labels, radius=1, autopct="%.1f%%", pctdistance=0.9)
+
+        chart[0].set_title(self._dates[-1] + " through " + self._dates[0] + "\nPayments & Returns: $" + str(
+                self.get_totals(self._payments_returns)) + "\nTotal: $" + str(self._total_amount))
+        chart[1].set_title(other._dates[-1] + " through " + other._dates[0] + "\nPayments & Returns: $" + str(
+            other.get_totals(other._payments_returns)) + "\nTotal: $" + str(other._total_amount))
+        chart[0] = chart[0].pie(self._sizes, labels=(self._final_recs), radius=1, autopct="%.1f%%", pctdistance=0.9)
+        chart[1] = chart[1].pie(other._sizes, labels=(other._final_recs), radius=1, autopct="%.1f%%", pctdistance=0.9)
         plt.legend(self._labels, bbox_to_anchor=(1, 0), loc="upper right",)
+
         plt.show()
 
 
 if __name__ == '__main__':
     one_month = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
     last_three_months = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData3months.csv')
-    one_month+last_three_months
-
+    # Adding two Objects and Comparing it
+    one_month + last_three_months
+    
+    # Calling single object
+    one_month.draw()
