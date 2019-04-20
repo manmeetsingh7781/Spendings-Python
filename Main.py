@@ -4,20 +4,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_totals(each_list):
-    total = 0
-    for each in each_list:
-        total += float(each)
-    return round(total, 2)
-
 class BoFA():
-    _total_amount = 0
-    _counter = 0
-    _records, _chart_setup, _labels, _sizes, _dates, _food, _payments_returns, _gas, _other, _entertainment, _electronics = (
-        [], [], [], [], [], [], [], [], [], [], [])
 
     def __init__(self, path):
         self.path = path
+        self._total_amount = 0
+        self._counter = 0
+        self._records, self._chart_setup, self._labels, self._sizes, self._dates, self._food, self._payments_returns, \
+        self._gas, self._other, self._entertainment, self._electronics = ([], [], [], [], [], [], [], [], [], [], [])
+
+    @staticmethod
+    def get_totals(each_list):
+        total = 0
+        for each in each_list:
+            total += float(each)
+        return round(total, 2)
 
     def calculate_total(self):
 
@@ -74,10 +75,10 @@ class BoFA():
                     digit_finder = re.search(r'\d(\d)*.(\d)*', each_group)
                     if digit_finder:
                         self._total_amount += float(digit_finder.group().replace(',', ''))
-        results_by_name = sorted({get_totals(self._food): 'Restaurants/Dining',
-                                  get_totals(self._gas): 'Gasoline/Fuel', get_totals(self._other): 'Other Expenses',
-                                  get_totals(self._entertainment): 'Entertainment',
-                                  get_totals(self._electronics): 'Electronics'}.items(), key=operator.itemgetter(0))
+        results_by_name = sorted({self.get_totals(self._food): 'Restaurants/Dining',
+                                  self.get_totals(self._gas): 'Gasoline/Fuel', self.get_totals(self._other): 'Other Expenses',
+                                  self.get_totals(self._entertainment): 'Entertainment',
+                                  self.get_totals(self._electronics): 'Electronics'}.items(), key=operator.itemgetter(0))
         calculate_percentage = lambda n: round((n / self._total_amount) * 100, 2)
         for each_item in results_by_name:
             data = dict()
@@ -108,11 +109,14 @@ class BoFA():
         ax.set_title(
             "\n\nWarning: All of these calculations are rounded to the nearest k, and Payments & returns are not included in total\nData Records through " +
             self._dates[-1] + " to " + self._dates[0] + " \n" + " Total-Spending: $" + str(
-                round(self._total_amount, 2)) + "\nPayments & Returns: $" + str(get_totals(self._payments_returns)))
+                round(self._total_amount, 2)) + "\nPayments & Returns: $" + str(self.get_totals(self._payments_returns)))
         plt.show()
 
     # Add two Bank Accounts and compare it
-   
+
 
 if __name__ == '__main__':
-    BoFA('C:\\Users\Honey Singh\\Desktop\\ExportData.csv').calculate_total()
+    Me = BoFA('C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
+    Me.calculate_total()
+
+
