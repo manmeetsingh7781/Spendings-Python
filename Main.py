@@ -127,24 +127,26 @@ class BoFA:
             self._dates[-1] + " to " + self._dates[0] + " \n" + " Total-Spending: $" + str(
                 round(self._total_amount, 2)) + "\nPayments & Returns: $" + str(
                 self.get_totals(self._payments_returns)))
-
         plt.show()
 
     # Add two Bank Accounts and compare it
     def __add__(self, other):
         self.calculate_total(False)
         other.calculate_total(False)
-        fig, axes = plt.subplots(1, 2)
+        fig, axes = plt.subplots(1, 2, figsize=(12, 8))
         chart = []
         for i, ax in enumerate(axes.flatten()):
             chart.append(ax)
-
-        chart[0] = chart[0].pie(self._sizes, radius=1, autopct="%.1f%%", pctdistance=0.9)
-        chart[1] = chart[1].pie(other._sizes, radius=1, autopct="%.1f%%", pctdistance=0.9)
+        chart[0].set_title(self._dates[-1] + " through " + self._dates[0])
+        chart[1].set_title(other._dates[-1] + " through " + other._dates[0])
+        chart[0] = chart[0].pie(self._sizes, labels=self._labels, radius=1, autopct="%.1f%%", pctdistance=0.9)
+        chart[1] = chart[1].pie(other._sizes, labels=other._labels, radius=1, autopct="%.1f%%", pctdistance=0.9)
+        plt.legend(self._labels, bbox_to_anchor=(1, 0), loc="upper right",)
         plt.show()
 
 
 if __name__ == '__main__':
     one_month = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
     last_three_months = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData3months.csv')
-    one_month.draw()
+    one_month+last_three_months
+
