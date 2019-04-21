@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 
 
 class BoFA:
-
+    c = 0
     def __init__(self, path):
         self.path = path
         self._total_amount = 0
         self._counter = 0
-        self.calculating = False
-        self._records, self._chart_setup, self._labels, self._sizes, self._dates, self._food, self._payments_returns, \
+
+        self._calculating = False
+        self._records, self._chart_setup, self._labels, self._sizes, self._dates, self._food, self._payments_returns,\
         self._gas, self._other, self._entertainment, self._electronics, self._money, self._final_recs = ([], [], [], [], [], [], [], [], [], [], [], [], [])
 
     @staticmethod
@@ -23,60 +24,59 @@ class BoFA:
 
     # Takes a file and calculates the Spendings
     def calculate_total(self, drawing):
-        self.calculating = True
+        self._calculating = True
         file = open(self.path, 'r')
         file_data = list(file.readlines())
         for each in file_data:
             date = re.search(r',\d+/\d+/\d+', each)
             if date:
                 self._dates.append(date.group().replace(',', ''))
-            pattern = r'\$.+.[.+, .+]\d+'
+            pattern = r'\$.+.[.+, .+],+'
             matcher = re.search(pattern, each)
             if matcher:
-                each_group = matcher.group()
-
+                self.c +=1
+                each_group = matcher.group().replace(',,,', '').replace('$,', '')
                 if 'Restaurants/Dining' in each:
-                    self._food.append(each_group.replace('$,-', ''))
+                    self._food.append(each_group.replace('-', ''))
                 else:
-                    self._food.append('0')
+                    self._food.append(0)
 
                 if 'Other Expenses' in each:
-                    self._other.append(matcher.group().replace('$,-', ''))
+                    self._other.append(abs(float(each_group)))
                 elif 'Service Charges/Fees' in each:
-                    self._other.append(matcher.group().replace('$,-', ''))
+                    self._other.append(abs(float(each_group)))
                 elif 'Automotive Expenses' in each:
-                    self._other.append(matcher.group().replace('$,-', ''))
+                    self._other.append(abs(float(each_group)))
                 elif 'General Merchandise' in each:
-                    self._other.append(matcher.group().replace('$,-', ''))
+                    self._other.append(abs(float(each_group)))
                 else:
-                    self._other.append('0')
+                    self._other.append(0)
 
                 if 'Card Payments' in each:
-                    self._payments_returns.append(matcher.group().replace('$,', ''))
+                    self._payments_returns.append(abs(float(each_group)))
                 elif 'Other Income' in each:
-                    self._payments_returns.append(matcher.group().replace('$,', ''))
+                    self._payments_returns.append(abs(float(each_group)))
                 else:
-                    self._payments_returns.append('0')
+                    self._payments_returns.append(0)
 
                 if 'Gasoline/Fuel' in each:
-                    self._gas.append(matcher.group().replace('$,-', ''))
+                    self._gas.append(abs(float(each_group)))
                 else:
-                    self._gas.append('0')
+                    self._gas.append(0)
 
                 if 'Entertainment' in each:
-                    self._entertainment.append(matcher.group().replace('$,-', ''))
+                    self._entertainment.append(abs(float(each_group)))
                 else:
-                    self._entertainment.append('0')
+                    self._entertainment.append(0)
 
                 if 'Electronics' in each:
-                    self._electronics.append(matcher.group().replace('$,-', ''))
+                    self._electronics.append(abs(float(each_group)))
                 else:
-                    self._electronics.append('0')
+                    self._electronics.append(0)
 
-                if not each_group.find("$,-"):
-                    digit_finder = re.search(r'\d(\d)*.(\d)*', each_group)
-                    if digit_finder:
-                        self._total_amount += float(digit_finder.group().replace(',', ''))
+
+        self._total_amount = self.get_totals(self._food) + self.get_totals(self._gas) + self.get_totals(self._entertainment) + self.get_totals(self._electronics) + self.get_totals(self._other)
+
         results_by_name = sorted({self.get_totals(self._food): 'Restaurants/Dining',
                                   self.get_totals(self._gas): 'Gasoline/Fuel', self.get_totals(self._other): 'Other Expenses',
                                   self.get_totals(self._entertainment): 'Entertainment',
@@ -111,7 +111,7 @@ class BoFA:
 
         if not calculations:
             calculations = True
-        if calculations and not self.calculating:
+        if calculations and not self._calculating:
             self.calculate_total(False)
 
         fig, ax = plt.subplots(figsize=(12, 8), subplot_kw=dict(aspect="equal"))
@@ -147,13 +147,12 @@ class BoFA:
             chart.append(ax)
 
         chart[0].set_title(self._dates[-1] + " through " + self._dates[0] + "\nPayments & Returns: $" + str(
-                self.get_totals(self._payments_returns)) + "\nTotal: $" + str(self._total_amount))
+                self.get_totals(self._payments_returns)) + "\nTotal-Spending: $" + str(self._total_amount))
         chart[1].set_title(other._dates[-1] + " through " + other._dates[0] + "\nPayments & Returns: $" + str(
-            other.get_totals(other._payments_returns)) + "\nTotal: $" + str(other._total_amount))
+            other.get_totals(other._payments_returns)) + "\nTotal-Spending: $" + str(other._total_amount))
         chart[0] = chart[0].pie(self._sizes, labels=(self._final_recs), radius=1, autopct="%.1f%%", pctdistance=0.9)
         chart[1] = chart[1].pie(other._sizes, labels=(other._final_recs), radius=1, autopct="%.1f%%", pctdistance=0.9)
         plt.legend(self._labels, bbox_to_anchor=(1, 0), loc="upper right",)
-
         plt.show()
 
 
