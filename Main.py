@@ -133,7 +133,6 @@ class BoFA:
             self._dates[-1] + " to " + self._dates[0] + " \n" + " Total-Spending: $" + str(
                 round(self._total_amount, 2)) + "\nPayments & Returns: $" + str(
                 self.get_totals(self._payments_returns)))
-
         plt.show()
 
     # Add two Bank Accounts and compare it
@@ -157,10 +156,8 @@ class BoFA:
 
 
 if __name__ == '__main__':
-    one_month = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData.csv')
-    last_three_months = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData3months.csv')
-    # Adding two Objects and Comparing it
-    one_month + last_three_months
-    
-    # Calling single object
-    one_month.draw()
+    one_month = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportData3months.csv')
+    one_month2 = BoFA(path='C:\\Users\Honey Singh\\Desktop\\ExportDataDebit.csv')
+    one_month + one_month2
+
+
